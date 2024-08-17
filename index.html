@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="assets/css/index.css" />
+
+    <title>ARIJ Landing Page</title>
+</head>
+<body>
+<div id="header"></div>
+<div id="first_sec"></div>
+<div id="second_sec"></div>
+<div id="third_sec"></div>
+<div id="fourth_sec"></div>
+<div id="fifth_sec"></div>
+<div id="sixth_sec"></div>
+<div id="seventh_sec"></div>
+
+<script>
+    fetch('partials/header.html')
+        .then(response => response.text())
+        .then(data => document.getElementById('header').innerHTML = data);
+
+    fetch('partials/first_section.html')
+        .then(response => response.text())
+        .then(data => document.getElementById('first_sec').innerHTML = data);
+
+    fetch('partials/second_section.html')
+        .then(response => response.text())
+        .then(data => document.getElementById('second_sec').innerHTML = data);
+
+    fetch('partials/third_section.html')
+        .then(response => response.text())
+        .then(data => document.getElementById('third_sec').innerHTML = data);
+
+    fetch('partials/fourth_section.html')
+        .then(response => response.text())
+        .then(data => document.getElementById('fourth_sec').innerHTML = data);
+
+
+    // Fetch and load content
+    fetch('partials/fifth_section.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('fifth_sec').innerHTML = data;
+
+            let previousHex = null; // To keep track of the previously clicked hexagon
+
+            document.querySelectorAll('.hex').forEach(hex => {
+                hex.addEventListener('click', function() {
+                    console.log('Hex clicked');
+
+                    // If there was a previously clicked hexagon, restore its original content
+                    if (previousHex && previousHex !== this) {
+                        const previousInfoText = previousHex.querySelector('.info-text');
+                        if (previousInfoText) {
+                            previousInfoText.remove();
+                        }
+                        const previousInitialContent = previousHex.querySelector('p');
+                        if (previousInitialContent) {
+                            previousInitialContent.style.display = 'block'; // Show the original content
+                        }
+                    }
+
+                    // Hide the initial content inside the clicked hexagon
+                    const initialContent = this.querySelector('p');
+                    if (initialContent) {
+                        initialContent.style.display = 'none';
+                    }
+
+                    // Remove any previously shown .info-text elements in the current hexagon
+                    const previousInfo = this.querySelector('.info-text');
+                    if (previousInfo) {
+                        previousInfo.remove();
+                    }
+
+                    // Retrieve the related info element
+                    const infoId = this.getAttribute('data-info');
+                    const infoElement = document.getElementById(infoId);
+
+                    // Clone the element to avoid moving the original from its position
+                    const infoClone = infoElement.cloneNode(true);
+                    infoClone.style.display = 'block';
+
+                    // Append the cloned element to the clicked hex
+                    this.appendChild(infoClone);
+
+                    // Update the previously clicked hexagon to the current one
+                    previousHex = this;
+                });
+            });
+
+            console.log(document.querySelectorAll('.hex'), 'vvvv');
+        });
+
+    fetch('partials/sixth_section.html')
+        .then(response => response.text())
+        .then(data => document.getElementById('sixth_sec').innerHTML = data);
+
+    fetch('partials/seventh_section.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('seventh_sec').innerHTML = data;
+
+            const track = document.querySelector(".carousel__track");
+            const slides = Array.from(track.children);
+            const dotsNav = document.querySelector(".carousel__nav");
+            const dots = Array.from(dotsNav.children);
+
+            const slideWidth = slides[0].getBoundingClientRect().width;
+            const setSlidePosition = (slide, index) => {
+                slide.style.left = slideWidth * index + "px";
+            };
+            slides.forEach(setSlidePosition);
+            const moveToSlide = (track, currentSlide, targetSlide) => {
+                track.style.transform = "translateX(-" + targetSlide.style.left + ")";
+                currentSlide.classList.remove("current-slide");
+                targetSlide.classList.add("current-slide");
+            };
+
+            const updateDots = (currentDot, targetDot) => {
+                currentDot.classList.remove("current-slide");
+                targetDot.classList.add("current-slide");
+            };
+
+            dotsNav.addEventListener("click", (e) => {
+                const targetDot = e.target.closest("button");
+                if (!targetDot) return;
+                const currentSlide = track.querySelector(".current-slide");
+                const currentDot = dotsNav.querySelector(".current-slide");
+                const targetIndex = dots.findIndex((dot) => dot === targetDot);
+                const targetSlide = slides[targetIndex];
+                moveToSlide(track, currentSlide, targetSlide);
+                updateDots(currentDot, targetDot);
+            });
+        });
+
+</script>
+
+
+
+</body>
+</html>
